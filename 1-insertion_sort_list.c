@@ -1,96 +1,55 @@
 #include "sort.h"
 
 /**
- * swap_left -swap two nodes right left position
- * @list: list
- *Return: NULL
- *
- **/
-void swap_left(listint_t *list)
+* swapem - Swaps tha nodes
+* @l: left or lower node
+* @r: right or later node
+* @h: Head of dlist
+*/
+
+void swapem(listint_t *l, listint_t *r, listint_t **h)
 {
-	listint_t *tmp, *head;
+	listint_t *temp;
 
-	while (list->prev != NULL)
-	{
-		if (list->n < list->prev->n)
-		{
-			tmp = list->prev->prev;
-			list->prev->next = list->next;
-			list->next = list->prev;
-			list->prev->prev = list;
-			list->prev = tmp;
-			list->next->next->prev = list->next;
-			if (tmp != NULL)
-				tmp->next = list;
-			head = list;
-			while (head->prev != NULL)
-				head = head->prev;
-			print_list(head);
-		}
-		else
-			list = list->prev;
-	}
-}
-
-/**
- * swap_right -swap two nodes left rigth position
- * @l: list
- * Return: Null
- **/
-void swap_right(listint_t *l)
-{
-	listint_t *tmp, *head;
-
-	tmp = l->prev;
-
-	if (tmp != NULL)
-	{
-		tmp->next = l->next;
-		l->next->prev = tmp;
-	}
-	else
-		l->next->prev = NULL;
-	l->prev = l->next;
-	if (l->next->next != NULL)
-	{
-		l->next = l->next->next;
-		l->prev->next = l;
+	temp = l->prev;
+	if (temp)
+		temp->next = r;
+	r->prev = temp;
+	l->prev = r;
+	l->next = r->next;
+	r->next = l;
+	if (l->next != NULL)
 		l->next->prev = l;
-	}
-	else
-	{
-		l->next->next = l;
-		l->next = NULL;
-	}
-	head = l;
-	while (head->prev != NULL)
-		head = head->prev;
-	print_list(head);
-	swap_left(l->prev);
+	if (r->prev == NULL)
+		*h = r;
+	print_list(*h);
 }
 
 /**
- * insertion_sort_list -sorts a doubly linked list in ascending order
- * @list: list
- * Return: NULL
- */
+* insertion_sort_list - sorts a doubly linked list of integers
+* @list: Head of dlist
+*/
+
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *l;
+	listint_t *curr, *next, *prev, *prev2;
 
-	if ((list == NULL) || (*list == NULL) || ((*list)->next == NULL))
+	if (list == NULL)
 		return;
-	l = *list;
 
-	while (l->next != NULL)
+	curr = next = *list;
+	while (curr != NULL)
 	{
-		if (l->n > l->next->n)
+		while (curr->prev != NULL)
 		{
-			swap_right(l);
+			prev = curr->prev;
+			prev2 = prev;
+			if (prev->n > curr->n)
+				swapem(prev, curr, list);
+			curr = prev2;
 		}
-		else
-			l = l->next;
+		curr = next->next;
+		next = curr;
 	}
-	while ((*list)->prev != NULL)
-		*list = (*list)->prev;
+
 }
